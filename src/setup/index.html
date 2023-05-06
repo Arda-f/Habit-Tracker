@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body>
+    <form action="" id="myForm" style="display: flex; flex-direction: column; row-gap: 10px; width: 250px;">
+        <textarea id="kullanici-girisi" cols="30" rows="10" style="resize: none; padding: 5px;"></textarea>
+        <div style="display: flex; flex-direction: column;">
+            <span>Ad</span><input type="text" id="ad">
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <span>Soyad</span><input type="text" id="soyad">
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <span>yas</span><input type="number" id="yas">
+        </div>
+        <button id="add">Add</button>
+    </form>
+    
+    <script>
+        var form = document.getElementById("myForm");
+        function submitForm(event){
+            event.preventDefault();
+        }
+        form.onsubmit = submitForm
+
+
+        $("#add").on("click", function(){
+            var date2 = new Date()
+            var kisi = {
+                ad: $("#ad").val(),
+                soyad: $("#soyad").val(),
+                yas: $("#yas").val(),
+                ilgi_alanlari: $("textarea").val().trim().split((" ", "\n")),
+                ilk_kurulum: true,
+                basari_tablosu: {a:1},
+                createdAt: date2.getDay() + "/" + date2.getMonth() + "/" + date2.getFullYear()
+            }
+            var date = new Date("2023-01-01") 
+            console.log(kisi.basari_tablosu)
+            for(let i = 1; i < 13; i++)
+            {
+                kisi["basari_tablosu"][date.toDateString().split(" ")[1]] = {}
+                for(let j = 1; j < 32; j++)
+                {
+                    kisi["basari_tablosu"][date.toDateString().split(" ")[1]][j] = {}
+                    for(const alan of $("textarea").val().trim().split((" ", "\n")))
+                    {
+                        kisi["basari_tablosu"][date.toDateString().split(" ")[1]][j][alan] = false
+                    }
+                }
+                date.setMonth(i)
+            } 
+            localStorage.setItem("kullanici-bilgileri", JSON.stringify(kisi))
+        })
+        
+    </script>
+</body>
+</html>

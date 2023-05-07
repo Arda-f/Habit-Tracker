@@ -5,140 +5,43 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=,, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Habit Tracker</title>
     <style>
         body, html{
             padding: 0;
             margin: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            text-align: center;
         }
         table{
             height: 100%;
+            font-size: larger;
+        }
+        input{
+            size: 1000px;
+        }
+        #month{
+            font-size: x-large;
         }
     </style>
 </head>
 <body>
-    <div style="display: flex; justify-content: space-around;">
+    <h1 style="display: flex; justify-content: center; align-items: center; column-gap: 20px;">Yıllık Alışkanlık Takibi Programına Hoşgeldiniz <button id="reset">Verileri Sıfırla</button></h1>
+    <div style="display: flex; justify-content: center; height: 60px; align-items: center; column-gap: 20px;">
+        <span>Ok Tuşları İle Ay Seçebilirsiniz</span>
         <button id="backMonth"><</button>
         <span id="month"></span>
         <button id="nextMonth">></button>
     </div>
-    <table border="1">
-        <tr id="ilk">
-            <td></td>
-        </tr>
-    </table>
-    <script>
-        $(function(){
-            if(!localStorage.getItem("kullanici-bilgileri"))
-                document.location.href = "setup"
-
-            load_data()
-        })
-
-        var ay_sayaci = 0
-        var tarih_secici = new Date()
-        tarih_secici.setMonth(ay_sayaci)
-        $("#month").text(tarih_secici.toDateString().split(" ")[1])
-
-        $("#backMonth").on("click", function(){
-            if(ay_sayaci > 0)
-            {
-                ay_sayaci -= 1
-                tarih_secici.setMonth(ay_sayaci)
-                $("#month").text(tarih_secici.toDateString().split(" ")[1])
-                load_data()
-            }
-        })
-        $("#nextMonth").on("click", function(){
-            if(ay_sayaci < 11)
-            {
-                ay_sayaci += 1
-                tarih_secici.setMonth(ay_sayaci)
-                $("#month").text(tarih_secici.toDateString().split(" ")[1])
-                load_data()
-            }
-        })
-
-        function load_data(){
-            $("table").html('<tr id="ilk"><td></td></tr>')
-            $(JSON.parse(localStorage.getItem("kullanici-bilgileri"))).each(function(l, e){
-                for (let i = 1; i < 32; i++) 
-                {
-                    $("#ilk").append(`<td>${i}</td>`)
-                    var ilgi_alani = e.ilgi_alanlari[i - 1]
-                    if(ilgi_alani)
-                    {
-                        $("table").append(`<tr id='${ilgi_alani}'><td>${ilgi_alani}</td></tr>`)
-                    }
-                    for(let i = 1; i < 32; i++)
-                    {
-                        if(e.basari_tablosu[tarih_secici.toDateString().split(" ")[1]][i][ilgi_alani])
-                            $(`#${ilgi_alani}`).append(`<td><input type="checkbox" checked value='${i} ${ilgi_alani}'></td>`)
-                        else
-                           $(`#${ilgi_alani}`).append(`<td><input type="checkbox" value='${i} ${ilgi_alani}'></td>`)
-                    }
-                    // $("#ilk").append(`<td>${i + 1}</td>`)
-                }
-                
-            })
-
-            $("input").on("click", function(){
-                if(this.checked)
-                {
-                    var giris = this.value.split(" ")
-                    $(JSON.parse(localStorage.getItem("kullanici-bilgileri"))).each(function(l, e){
-                        e.basari_tablosu[$("#month").text()][giris[0]][giris[1]] = true    
-                        localStorage.setItem("kullanici-bilgileri", JSON.stringify(this))
-                    })
-                }
-                else
-                {
-                    var giris = this.value.split(" ")
-                    $(JSON.parse(localStorage.getItem("kullanici-bilgileri"))).each(function(l, e){
-                        e.basari_tablosu[$("#month").text()][giris[0]][giris[1]] = false    
-                        localStorage.setItem("kullanici-bilgileri", JSON.stringify(this))
-                    })
-                }
-            })
-        }
-                // for (let j in e.ilgi_alanlari) 
-                // {
-                //     var ilgi_alani = e.ilgi_alanlari[j]
-                //     $("table").html(`
-                //     ${$("table").html()} 
-                //     <tr class='ilk'>
-                //         <td>${ilgi_alani}</td>
-                //     </tr>
-                //     `)   
-                // }
-                // for(let i = 1; i < 32; i++)
-                // {
-                //     for(const aliskanlik of e.ilgi_alanlari)
-                //     {
-                //         $("tr").append(`<td><input type='checkbox' value="${i} ${aliskanlik}"></td>`)                     
-                //     }
-                // }   
-                // document.querySelectorAll("input").forEach(element => {
-                //     if(element.value == "16 futbol")
-                //         console.log(element)
-                // })
-                // for(const aliskanlik of e.ilgi_alanlari)
-                // {
-                //     for(let i = 1; i < 32; i++)
-                //     {
-                //         const kontrol = e.basari_tablosu[$("#month").text()]
-                //         if(kontrol[i]["bilgisayar"])
-                //             $(`input[value='${i}']`).attr("checked", 1)
-                //     }
-                // }
-                // for (const i in $("#ilk")[0].children) 
-                // {
-                //     const td = $("#ilk")[0].children[i]
-                //     if(i != 0)
-                //         td.innerText = i
-                // }
-    </script>
+    <table></table>
+    
+    <h3>1 Ay İçerisinde Yaptığınız Tüm Aktivitelerin Grafiği</h3>
+    <div id="canvas-parent"></div>
+    <script src="script.js"></script>
 </body>
 </html>
